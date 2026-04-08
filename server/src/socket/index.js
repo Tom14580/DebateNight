@@ -4,10 +4,17 @@ const { chatHandler } = require("./chatHandlers");
 let ioInstance = null;
 
 function initSocket(server) {
+
+  const clientUrl = process.env.CLIENT_URL || 
+                    (process.env.NODE_ENV === 'production' 
+                      ? 'https://your-frontend-url.onrender.com' 
+                      : 'http://localhost:5173');
+
   ioInstance = new Server(server, {
     cors: {
-      origin: "*",
-      methods: ["GET", "POST"]
+      origin: clientUrl,
+      methods: ["GET", "POST"],
+      credentials: true
     }
   });
 
