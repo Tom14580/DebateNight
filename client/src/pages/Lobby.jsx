@@ -10,9 +10,10 @@ export default function Lobby() {
     const socket = useContext(SocketContext);
     const location = useLocation();
 
+    const API_URL = import.meta.env.VITE_API_URL;
+
     const fetchRooms = async () => {
         try {
-            const API_URL = import.meta.env.VITE_API_URL;
             const roomsResponse = await fetch(`${API_URL}/api/rooms`);
             if (!roomsResponse.ok) {
                 throw new Error(`Rooms API error: ${roomsResponse.status}`);
