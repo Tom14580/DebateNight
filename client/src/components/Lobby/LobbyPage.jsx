@@ -9,12 +9,13 @@ export default function LobbyPage ({ roomsList, topicsList }) {
     const navigate = useNavigate();
 
     const handleCreateRoom = async (topic) => {
-        const response = await fetch('http://localhost:3000/api/rooms', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ topic }),
+        const API_URL = import.meta.env.VITE_API_URL;
+        const response = await fetch(`${API_URL}/api/rooms`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ topic }),
         });
         
         if (!response.ok) {

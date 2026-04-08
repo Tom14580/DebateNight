@@ -12,7 +12,8 @@ export default function Lobby() {
 
     const fetchRooms = async () => {
         try {
-            const roomsResponse = await fetch("http://localhost:3000/api/rooms");
+            const API_URL = import.meta.env.VITE_API_URL;
+            const roomsResponse = await fetch(`${API_URL}/api/rooms`);
             if (!roomsResponse.ok) {
                 throw new Error(`Rooms API error: ${roomsResponse.status}`);
             }
@@ -27,14 +28,14 @@ export default function Lobby() {
     useEffect(() => {
         async function fetchData() {
             try {
-                const roomsResponse = await fetch("http://localhost:3000/api/rooms");
+                const roomsResponse = await fetch(`${API_URL}/api/rooms`);
                 if (!roomsResponse.ok) {
                     throw new Error(`Rooms API error: ${roomsResponse.status}`);
                 }
                 const roomsData = await roomsResponse.json();
                 setRoomsList(roomsData);
                 
-                const topicsResponse = await fetch("http://localhost:3000/api/topics");
+                const topicsResponse = await fetch(`${API_URL}/api/topics`);
                 if (!topicsResponse.ok) {
                     throw new Error(`Topics API error: ${topicsResponse.status}`);
                 }
