@@ -1,0 +1,57 @@
+.side-picker {
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+}
+
+/* Title */
+.side-title {
+  font-size: var(--text-lg);
+}
+
+/* Button container */
+.side-options {
+  display: flex;
+  gap: var(--space-md);
+  justify-content: center;
+}
+
+/* Base side button */
+.side-btn {
+  flex: 1;
+  padding: var(--space-md);
+  font-size: var(--text-md);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  transition: background 0.15s ease, border 0.15s ease;
+}
+
+/* FOR */
+.side-btn.for {
+  background: var(--for-bg);
+  border-color: var(--for-color);
+  color: var(--for-color);
+}
+
+.side-btn.for:hover:enabled {
+  background: var(--for-color);
+  color: white;
+}
+
+/* AGAINST */
+.side-btn.against {
+  background: var(--against-bg);
+  border-color: var(--against-color);
+  color: var(--against-color);
+}
+
+.side-btn.against:hover:enabled {
+  background: var(--against-color);
+  color: white;
+}
+
+/* Disabled */
+.side-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

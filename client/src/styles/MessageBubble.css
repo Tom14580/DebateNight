@@ -1,0 +1,54 @@
+/* Row controls alignment (left/right) */
+.message-row {
+  display: flex;
+  margin-bottom: var(--space-sm);
+}
+
+/* My messages → left */
+.message-row.mine {
+  justify-content: flex-start;
+}
+
+/* Opponent → right */
+.message-row.theirs {
+  justify-content: flex-end;
+}
+
+.message {
+  max-width: 70%;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+}
+
+/* Header (name + side) */
+.message-header {
+  font-size: var(--text-sm);
+  margin-bottom: var(--space-xs);
+  color: var(--text-secondary);
+}
+
+/* Text */
+.message-text {
+  font-size: var(--text-md);
+  color: var(--text-primary);
+  word-wrap: break-word;
+}
+
+/* Timestamp */
+.message-time {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  margin-top: var(--space-xs);
+  text-align: right;
+}
+
+.message-for {
+  border-color: var(--for-color);
+  color: var(--for-color);
+}
+
+.message-against {
+  border-color: var(--against-color);
+  color: var(--against-color);
+}

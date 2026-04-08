@@ -1,0 +1,23 @@
+.chat-input-container {
+  border-top: 1px solid var(--border);
+  padding-top: var(--space-md);
+}
+
+/* Row layout */
+.chat-input-row {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+/* Input grows */
+.chat-input-row .input {
+  flex: 1;
+}
+
+/* Meta (character count) */
+.chat-input-meta {
+  margin-top: var(--space-xs);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  text-align: right;
+}

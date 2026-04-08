@@ -1,0 +1,29 @@
+.opponent-status {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+/* Name */
+.opponent-name {
+  color: var(--text-primary);
+}
+
+/* Side badges (specific to debate sides) */
+.badge-for {
+  border: 1px solid var(--for-color);
+  color: var(--for-color);
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+}
+
+.badge-against {
+  border: 1px solid var(--against-color);
+  color: var(--against-color);
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+}

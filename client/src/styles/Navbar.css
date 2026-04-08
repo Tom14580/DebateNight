@@ -1,0 +1,45 @@
+/* =========================
+   NAVBAR
+========================= */
+
+.navbar {
+  width: 100%;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-primary);
+}
+
+/* Logo */
+.navbar-logo a {
+  color: var(--text-primary);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* Links container */
+.navbar-links {
+  display: flex;
+  gap: var(--space-md);
+}
+
+/* Link */
+.nav-link {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: var(--text-md);
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+/* Hover */
+.nav-link:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+/* Active route */
+.nav-link.active {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}

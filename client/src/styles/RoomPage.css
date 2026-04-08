@@ -1,0 +1,22 @@
+.room-page {
+  height: 100vh;
+}
+
+/* Header section */
+.room-header {
+  margin-bottom: var(--space-md);
+}
+
+/* Topic + status row */
+.room-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: var(--space-sm);
+}
+
+.room-topic {
+  font-size: var(--text-lg);
+  color: var(--text-primary);
+  max-width: 80%;
+}

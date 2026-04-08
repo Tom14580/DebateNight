@@ -1,0 +1,41 @@
+.home-page {
+  height: calc(100vh - 60px);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;  
+  padding-top: 80px;         
+  overflow: hidden;        
+}
+
+/* Content wrapper */
+.home-content {
+  text-align: center;
+  max-width: 500px;
+  width: 100%;
+}
+
+/* Title */
+.home-title {
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* Subtitle */
+.home-subtitle {
+  margin-top: var(--space-sm);
+  font-size: var(--text-lg);
+  color: var(--text-secondary);
+}
+
+/* Form */
+.home-form {
+  display: flex;
+  gap: var(--space-sm);
+  margin-top: var(--space-lg);
+}
+
+/* Input expands */
+.home-form .input {
+  flex: 1;
+}

@@ -1,0 +1,149 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(6px);
+
+  z-index: 1000;
+}
+
+.modal-content {
+  width: 100%;
+  max-width: 500px;
+  transition: none !important;
+}
+
+.modal-content:hover {
+  background: var(--bg-secondary);
+}
+
+.modal-content.card:hover {
+  background: var(--bg-secondary) !important;
+  border-color: var(--border) !important;
+}
+
+.modal-header {
+  margin-bottom: var(--space-sm);
+}
+
+/* Close button */
+.modal-close {
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 1.5rem;
+  line-height: 1;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  transition: background 0.15s ease;
+}
+
+.modal-close:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.form-section {
+  margin-bottom: var(--space-md);
+}
+
+.form-label {
+  display: block;
+  margin-bottom: var(--space-sm);
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+}
+
+/* Topics grid */
+.topics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--space-sm);
+  max-height: 260px;
+  overflow-y: auto;
+  padding-right: var(--space-xs);
+}
+
+/* Topic buttons */
+.topic-btn {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  text-align: left;
+  border: 1px solid var(--border);
+  transition: background 0.15s ease, border 0.15s ease;
+}
+
+.topic-btn:hover {
+  background: var(--bg-secondary);
+  border-color: var(--accent);
+}
+
+/* Selected state */
+.topic-btn-selected {
+  background: var(--bg-secondary);
+  border-color: var(--accent);
+}
+
+/* Divider */
+.form-divider {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  margin: var(--space-md) 0;
+  position: relative;
+}
+
+.form-divider::before,
+.form-divider::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 40%;
+  height: 1px;
+  background: var(--border);
+}
+
+.form-divider::before {
+  left: 0;
+}
+
+.form-divider::after {
+  right: 0;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+  margin-top: var(--space-lg);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--border);
+}
+
+.topics-grid::-webkit-scrollbar {
+  width: 8px;
+}
+
+.topics-grid::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.topics-grid::-webkit-scrollbar-thumb {
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-sm);
+}
+
+.topics-grid::-webkit-scrollbar-thumb:hover {
+  background: var(--border);
+}
+
+.topics-grid {
+  scrollbar-width: thin;
+  scrollbar-color: var(--bg-tertiary) transparent;
+}
