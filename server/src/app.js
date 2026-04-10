@@ -6,15 +6,29 @@ const topicRoutes = require("./routes/topics")
 
 const app = express();
 
-const clientUrl = process.env.CLIENT_URL || 
-                  (process.env.NODE_ENV === 'production' 
-                    ? 'https://debatenightfrontend.onrender.com' 
-                    : 'http://localhost:5173');
+const allowedOrigins = [
+  'https://debatenightfrontend.onrender.com',
+  'http://localhost:5173',
+  'http://localhost:3000'
+];
 
-app.use(cors({
-  origin: clientUrl,
-  credentials: true
-}));
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    
+    console.error(`CORS error: Origin not allowed: ${origin}`);
+    return callback(new Error("Not allowed by CORS"), false);
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
+
+app.use(cors(corsOptions));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

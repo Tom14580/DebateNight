@@ -5,14 +5,15 @@ let ioInstance = null;
 
 function initSocket(server) {
 
-  const clientUrl = process.env.CLIENT_URL || 
-                    (process.env.NODE_ENV === 'production' 
-                      ? 'https://your-frontend-url.onrender.com' 
-                      : 'http://localhost:5173');
+  const allowedOrigins = [
+    'https://debatenightfrontend.onrender.com',
+    'http://localhost:5173',
+    'http://localhost:3000'
+  ];
 
   ioInstance = new Server(server, {
     cors: {
-      origin: clientUrl,
+      origin: allowedOrigins,
       methods: ["GET", "POST"],
       credentials: true
     }
