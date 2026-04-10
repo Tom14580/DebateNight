@@ -41,7 +41,7 @@ export default function Lobby() {
                     throw new Error(`Topics API error: ${topicsResponse.status}`);
                 }
                 const topicsData = await topicsResponse.json();
-                setTopicsList(topicsData);
+                setTopicsList(topicsData.debateTopics);
             } catch (error) {
                 console.error("Error fetching data:", error);
                 setError(error.message);
