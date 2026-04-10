@@ -8,7 +8,7 @@ const app = express();
 
 const clientUrl = process.env.CLIENT_URL || 
                   (process.env.NODE_ENV === 'production' 
-                    ? 'https://your-frontend-url.onrender.com' 
+                    ? 'https://debatenightfrontend.onrender.com' 
                     : 'http://localhost:5173');
 
 app.use(cors({
