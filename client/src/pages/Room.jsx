@@ -10,9 +10,7 @@ export default function Room() {
     displayName = "Anonymous";
   }
 
-  let userId = localStorage.getItem("userId");
-
-  const { room, opponentSide, debateStarted, socket, messages } = useRoomHook(
+  const { room, opponentSide, debateStarted, socket, messages, currentUserId } = useRoomHook(
     roomId,
     displayName,
   );
@@ -23,7 +21,7 @@ export default function Room() {
       displayName={displayName}
       socket={socket}
       opponentSide={opponentSide}
-      userId={userId}
+      userId={currentUserId}
       messages={messages}
     ></RoomPage>
   ) : (

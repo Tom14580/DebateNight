@@ -5,12 +5,6 @@ import Room from "./pages/Room"
 import Navbar from "./components/shared/Navbar";
 
 export default function App() {
-  let userId = localStorage.getItem("userId");
-  if (!userId) {
-      userId = crypto.randomUUID();
-      localStorage.setItem("userId", userId);
-  }
-
   return (
     <BrowserRouter>
       <Navbar />

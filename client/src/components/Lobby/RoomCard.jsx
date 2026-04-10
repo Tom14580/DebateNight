@@ -9,6 +9,8 @@ export default function RoomCard({ roomId, topic, status, users }) {
         statusClassName = "badge-finished"
     }
 
+    const userCount = users?.length || 0;
+
     return (
     <div className="card flex-col">
         <div className="flex-between">
@@ -19,7 +21,7 @@ export default function RoomCard({ roomId, topic, status, users }) {
         </div>
 
         <p className="mt-sm">
-            {users.length}/2 participants
+            {userCount}/2 participants
         </p>
 
         <button
@@ -27,7 +29,7 @@ export default function RoomCard({ roomId, topic, status, users }) {
             disabled={status !== "waiting" || users.length >= 2}
             onClick={() => navigate(`/rooms/${roomId}`)}
             >
-            {users.length >= 2 ? "Full" : "Join"}
+            {userCount >= 2 ? "Full" : "Join"}
         </button>
     </div>
   );

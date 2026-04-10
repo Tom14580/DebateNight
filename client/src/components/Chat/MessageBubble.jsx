@@ -13,7 +13,7 @@ export default function MessageBubble({
   const sideClass = side === "For" ? "message-for" : "message-against";
 
   return (
-    <div className={`message-row ${isMine ? "mine" : "theirs"}`}>
+    <div className={`message-row ${isMine ? "theirs" : "mine"}`}>
       <div className={`message ${sideClass}`}>
         <div className="message-header">
           <span className="message-name">{displayName}</span>

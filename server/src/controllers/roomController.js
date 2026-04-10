@@ -1,19 +1,21 @@
 const { createNewRoom, getAllRooms, getRoom, addUser, setStatus, removeUser, deleteRoom } = require('../data/rooms');
 
-function getRooms (req, res) {
+async function getRooms (req, res) {
     try {
-        const activeRooms = getAllRooms().filter(room => room.status != "finished");
+        const allRooms = await getAllRooms();
+        const activeRooms = allRooms.filter(room => room.status !== "finished");
         res.status(200).send(activeRooms);
     }
     catch (error) {
         res.status(500).send(error.message);
+        console.error(error.message);
     }
 };
 
-function getRoomById (req, res) {
+async function getRoomById (req, res) {
     try {
         const { id } = req.params;
-        const room = getRoom(id);
+        const room = await getRoom(id);
 
         if (!room) {
             return res.status(404).send("Room Not Found");
@@ -26,7 +28,7 @@ function getRoomById (req, res) {
     }
 }
 
-function createRoom (req, res) {
+async function createRoom (req, res) {
     try {
         const { topic } = req.body;
 
@@ -34,7 +36,7 @@ function createRoom (req, res) {
             return res.status(400).send("Topic is required");
         }
 
-        const newRoom = createNewRoom(topic);
+        const newRoom = await createNewRoom(topic);
         res.status(201).send(newRoom);
     }
     catch (error) {

@@ -1,12 +1,23 @@
-const { createNewRoom, getAllRooms, getRoom, addUser, setStatus, removeUser, deleteRoom, updateSide, addMessage } = require('../data/rooms');
+const { createNewRoom, getAllRooms, getRoom, addUser, setStatus, removeUser, deleteRoom, updateSide, updateSocketId, addMessage } = require('../data/rooms');
 const disconnectTimers = new Map();
 
-function handleLeave(userId, roomId, io) {
-    const room = getRoom(roomId);
-    if (!room) return;
+async function handleLeave(userId, roomId, io, socket) {
+    let room;
+    try {
+        room = await getRoom(roomId);
+    } catch (error) {
+        if (socket) socket.emit("error", { message: error.message });
+        console.error("Error in handleLeave getRoom:", error);
+        return;
+    }
+    if (!room) {
+        return;
+    }
 
     const user = room.users.find(u => u.userId === userId);
-    if (!user) return;
+    if (!user) {
+        return;
+    }
 
     const debateStarted = room.status === "in-progress";
 
@@ -18,25 +29,39 @@ function handleLeave(userId, roomId, io) {
                 s.leave(roomId);
             }
         });
-        deleteRoom(roomId);
+        try {
+            await deleteRoom(roomId);
+        } catch (error) {
+            if (socket) socket.emit("error", { message: error.message });
+            console.error("Failed to delete room in handleLeave");
+            return
+        }
     } else {
-        removeUser(roomId, userId);
+        try {
+            await removeUser(roomId, userId);
+        } catch (error) {
+            if (socket) socket.emit("error", { message: error.message });
+            console.error("Failed to remove user in handleLeave:", error);
+            return
+        }
 
-        const updatedRoom = getRoom(roomId);
-        if (!updatedRoom) return;
+        let finalRoom;
+        try {
+            finalRoom = await getRoom(roomId);
+        } catch (error) {
+            if (socket) socket.emit("error", { message: error.message });
+            console.error("Failed to get room in handleLeave:", error);
+            return
+        }
 
-        const finalRoom = getRoom(roomId);
-        if (finalRoom.users.length === 0) {
-            deleteRoom(roomId);
-        } else if (finalRoom.users.length === 1) {
-            io.to(roomId).emit("debate-ended", { message: "The other user left. Room is closing." });
-
-            io.sockets.sockets.forEach(s => {
-                if (s.rooms.has(roomId)) {
-                    s.leave(roomId);
-                }
-            });
-            deleteRoom(roomId);
+        if (!finalRoom || finalRoom.users.length === 0) {
+            try {
+                await deleteRoom(roomId);
+            } catch (error) {
+                if (socket) socket.emit("error", { message: error.message });
+                console.error("Failed to delete room in handleLeave:", error);
+                return
+            }
         } else {
             io.to(roomId).emit("room-updated", { room: finalRoom });
             io.to(roomId).emit("user-disconnected", { user, room: finalRoom });
@@ -44,26 +69,50 @@ function handleLeave(userId, roomId, io) {
     }
 }
 
-function roomHandler(socket, io) {
-    socket.on("join-room", (data) => {
-        const room = getRoom(data.roomId);
+async function roomHandler(socket, io) {
+    socket.on("join-room", async (data) => {
+        let room;
+        try {
+            room = await getRoom(data.roomId);
+        } catch (error) {
+            socket.emit("error", { message: error.message });
+            return;
+        }
         if (!room) {
             socket.emit("error", { message: "Room not found" });
             return;
         }
 
-        const existingUser = room.users.find(u => u.userId === data.userId);
+        if (!room.users || !Array.isArray(room.users)) {
+            room.users = [];
+        }
+
+        // Check if this is a reconnecting user (by userId, not displayName)
+        const existingUser = data.userId ? room.users.find(u => {
+            return u.userId === data.userId || u.userId === parseInt(data.userId);
+        }) : null;
+        
         if (existingUser) {
-            const timer = disconnectTimers.get(data.userId);
-            if (timer) {
-                clearTimeout(timer);
-                disconnectTimers.delete(data.userId);
+            // Clear any disconnect timer for this user
+            if (disconnectTimers.has(existingUser.userId)) {
+                clearTimeout(disconnectTimers.get(existingUser.userId));
+                disconnectTimers.delete(existingUser.userId);
+            }
+
+            try {
+                await updateSocketId(existingUser.userId, socket.id);
+            } catch (error) {
+                console.error(`Failed to update socket ID: ${error}`);
+                socket.emit("error", { message: "Failed to reconnect" });
+                return;
             }
 
             existingUser.socketId = socket.id;
             socket.join(room.id);
             
             socket.emit("room-updated", { room });
+            
+            io.to(room.id).emit("room-updated", { room });
             
             if (room.users.length === 2 && room.users.every(u => u.side !== null)) {
                 socket.emit("debate-start", { room });
@@ -76,60 +125,132 @@ function roomHandler(socket, io) {
                     displayName: opponent.displayName,
                     side: opponent.side
                 });
-        }
-        
-        return;
+            }
+            
+            return;
         }
 
+        // New user joining
         if (room.users.length >= 2) {
             socket.emit("room-full", { message: "Room is full" });
             return;
         }
-        addUser(room.id, {socketId: socket.id, displayName: data.displayName, side:null, userId: data.userId,});
-        socket.join(room.id);
-        const updatedRoom = getRoom(room.id);
-        if (updatedRoom.users.length == 2) {
-            setStatus(room.id, "in-progress");
-        } else if (updatedRoom.users.length == 1) {
-            setStatus(room.id, "waiting");
+        try {
+            await addUser(room.id, socket.id, data.displayName);
+        } catch(error) {
+            socket.emit("error", { message: error.message });
+            return;
         }
-        const finalRoom = getRoom(room.id);
+        socket.join(room.id);
+        let updatedRoom;
+        try {
+            updatedRoom = await getRoom(room.id);
+        } catch(error) {
+            socket.emit("error", { message: error.message });
+            return;
+        }
+        if (updatedRoom.users.length == 2) {
+            try {
+                await setStatus(room.id, "in-progress");
+            } catch(error) {
+                socket.emit("error", { message: error.message });
+                return;
+            }
+        } else if (updatedRoom.users.length == 1) {
+            try {
+                await setStatus(room.id, "waiting");
+            } catch(error) {
+                socket.emit("error", { message: error.message });
+                return;
+            }
+        }
+        let finalRoom;
+        try {
+            finalRoom = await getRoom(room.id);
+        } catch(error) {
+            socket.emit("error", { message: error.message });
+            return;
+        }
         io.to(room.id).emit("room-updated", { room: finalRoom })
     })
 
-    socket.on("disconnect", () => {
-        const rooms = getAllRooms();
+    socket.on("disconnect", async () => {
+        let rooms;
+        try {
+            rooms = await getAllRooms();
+        } catch (error) {
+            socket.emit("error", { message: error.message });
+            return;
+        }
 
-        rooms.forEach(room => {
+        if (!Array.isArray(rooms)) {
+            console.error("getAllRooms did not return an array:", rooms);
+            return;
+        }
+
+        for (const room of rooms) {
+            if (!room.users || !Array.isArray(room.users)) {
+                continue;
+            }
+
             const user = room.users.find(u => u.socketId === socket.id);
-            if (!user) return;
+            if (!user) continue;
 
-            if (disconnectTimers.has(user.userId)) return;
+
+            if (disconnectTimers.has(user.userId)) {
+                continue;
+            }
 
             const timer = setTimeout(() => {
-                handleLeave(user.userId, room.id, io);
+                handleLeave(user.userId, room.id, io, null);
                 disconnectTimers.delete(user.userId);
             }, 5000);
 
             disconnectTimers.set(user.userId, timer);
 
             io.to(room.id).emit("user-disconnected", { user, room });
-        });
+        }
     });
 
-    socket.on("leave-room", ({ roomId, userId }) => {
-        const timer = disconnectTimers.get(userId);
+    socket.on("leave-room", async ({ roomId, userId }) => {
+        
+        let room;
+        try {
+            room = await getRoom(roomId);
+        } catch (error) {
+            socket.emit("error", { message: error.message });
+            return;
+        }
+
+        if (!room) {
+            socket.emit("error", { message: "Room not found" });
+            return;
+        }
+
+        const user = room.users.find(u => u.socketId === socket.id);
+        if (!user) {
+            socket.emit("error", { message: "User not found in room" });
+            return;
+        }
+
+        const timer = disconnectTimers.get(user.userId);
         if (timer) {
             clearTimeout(timer);
-            disconnectTimers.delete(userId);
+            disconnectTimers.delete(user.userId);
         }
 
         socket.leave(roomId);
-        handleLeave(userId, roomId, io);
+        await handleLeave(user.userId, roomId, io, socket);
     });
 
-    socket.on("select-side", ({ roomId, side }) => {
-        room = getRoom(roomId);
+    socket.on("select-side", async ({ roomId, side }) => {
+        let room;
+        try {
+            room = await getRoom(roomId);
+        } catch (error) {
+            socket.emit("error", { message: error.message });
+            return;
+        }
         if (!room) {
             socket.emit("error", { message: "Room not found" });
             return;
@@ -152,9 +273,20 @@ function roomHandler(socket, io) {
             return;
         }
 
-        updateSide(roomId, socket.id, side);
+        try {
+            await updateSide(roomId, user.userId, side);
+        } catch (error) {
+            socket.emit("error", { message: error.message });
+            return;
+        }
 
-        const updatedRoom = getRoom(roomId);
+        let updatedRoom;
+        try {
+            updatedRoom = await getRoom(roomId);
+        } catch (error) {
+            socket.emit("error", { message: error.message });
+            return;
+        }
         const updatedUser = updatedRoom.users.find(u => u.socketId === socket.id);
 
         const socketId = socket.id;

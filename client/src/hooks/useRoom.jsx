@@ -10,11 +10,22 @@ const useRoomHook = (roomId, displayName) => {
     const [debateStarted, setDebateStarted] = useState(false);
     const [hasJoined, setHasJoined] = useState(false);
     const [messages, setMessages] = useState([]);
-    const userId = localStorage.getItem("userId");
+    const [currentUserId, setCurrentUserId] = useState(null);
     
     useEffect(() => {
         const handleRoomUpdated = ({ room }) => {
             setRoom(room);
+            if (room.messages && Array.isArray(room.messages)) {
+                setMessages(room.messages);
+            }
+            if (socket && room.users) {
+                const currentUser = room.users.find(u => u.socketId === socket.id);
+                if (currentUser) {
+                    setCurrentUserId(currentUser.userId);
+                    const userIdStr = String(currentUser.userId);
+                    sessionStorage.setItem(`room-${roomId}-userId`, userIdStr);
+                }
+            }
         };
 
         const handleRoomFull = ({ message }) => {
@@ -58,7 +69,7 @@ const useRoomHook = (roomId, displayName) => {
         }
 
         const handleDebateEnded = (data) => {
-            alert("The Debate Has Ended");
+            alert(data.message);
             navigate("/lobby");
         }
 
@@ -76,7 +87,8 @@ const useRoomHook = (roomId, displayName) => {
         socket.on("receive-message", handleReceiveMessage);
         
         if (!hasJoined && socket) {
-            socket.emit("join-room", { roomId, displayName, userId });
+            const storedUserId = sessionStorage.getItem(`room-${roomId}-userId`);
+            socket.emit("join-room", { roomId, displayName, userId: storedUserId });
             setHasJoined(true);
         }
 
@@ -94,13 +106,12 @@ const useRoomHook = (roomId, displayName) => {
 
     useEffect(() => {
         return () => {
-            if (userId) {
-                socket.emit("leave-room", { roomId, userId });
-            }
+            sessionStorage.removeItem(`room-${roomId}-userId`);
+            socket.emit("leave-room", { roomId });
         };
-    }, [roomId, userId, socket]);
+    }, [roomId, socket]);
 
-    return { room, opponentSide, debateStarted, socket, messages }
+    return { room, opponentSide, debateStarted, socket, messages, currentUserId }
 }
 
 export default useRoomHook;

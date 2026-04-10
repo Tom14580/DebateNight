@@ -21,6 +21,7 @@ DebateNight is a minimalist debating web application designed for 1-on-1 debates
 
 ### Real-Time Debate
 - **Live Chat**: Messages appear instantly across both users via WebSockets
+- **Message Persistence**: All messages stored in database
 - **Side Selection**: Each user picks FOR or AGAINST (one per side)
 - **Side-Coded Messages**: Chat bubbles are color-coded by argument side (green for FOR, red for AGAINST)
 - **Opponent Status**: See your opponent's name and selected side before debate starts
@@ -29,6 +30,7 @@ DebateNight is a minimalist debating web application designed for 1-on-1 debates
 - **Display Name**: Set your name on first visit, stored in browser
 - **Direct Room Links**: Share room URLs with other users
 - **Automatic Reconnection**: 5-second period to rejoin if connection drops
+- **Session Persistence**: User ID stored in browser sessionStorage for reconnection
 
 ### Debate Rules
 - **Exactly 2 Participants**: Room is full once both users join
@@ -66,9 +68,10 @@ server/
 ```
 
 ### Data Storage
-- **In-Memory**: All rooms and messages stored in server memory (MVP)
-- **No Database**: Persistent storage not yet implemented
+- **PostgreSQL Database**: Persistent storage for rooms, users, and messages
 - **Real-Time Sync**: Socket.io ensures instant updates across clients
+- **Message History**: All messages stored with user ID, side, and timestamp
+- **Session Persistence**: User IDs persist in browser sessionStorage for reconnection
 
 ---
 
@@ -92,6 +95,16 @@ server/
    cd ../client
    npm install
    ```
+
+4. **Setup PostgreSQL Database**:
+   - Install PostgreSQL (if not already installed)
+   - Create a database named `debate_night`
+   - Run the schema file to create tables:
+     ```bash
+     cd server/src/data
+     psql -U postgres -d debate_night -f schema.sql
+     ```
+   - Update `server/src/data/db.js` with your database connection details (host, user, password, port)
 
 ### Running the App
 
@@ -144,10 +157,37 @@ Open your browser to `http://localhost:5173` and start debating!
 ### 7. **Leave or Reload**
    - Navigating away via navbar triggers an immediate "leave" event
    - If you accidentally close/refresh, you have 5 seconds to rejoin before being kicked
+   - Your user ID and message history are restored from database on reconnection
 
 ---
 
-## Real-Time Events (Socket.io)
+## Database Schema
+
+### Tables
+
+**rooms**
+- `id` (TEXT, PRIMARY KEY) - Unique room identifier
+- `topic` (TEXT) - Debate topic
+- `status` (TEXT) - Room status: 'waiting', 'in-progress', 'finished'
+- `created_at` (TIMESTAMP) - When the room was created
+
+**room_users**
+- `id` (SERIAL, PRIMARY KEY) - Unique user identifier
+- `room_id` (TEXT, FK) - References rooms table
+- `socket_id` (TEXT) - Current WebSocket connection ID
+- `display_name` (TEXT) - User's display name
+- `side` (TEXT) - Selected side: 'For', 'Against', or NULL
+
+**messages**
+- `id` (SERIAL, PRIMARY KEY) - Unique message identifier
+- `room_id` (TEXT, FK) - References rooms table
+- `user_id` (INT, FK) - References room_users table
+- `display_name` (TEXT) - Sender's display name
+- `side` (TEXT) - Sender's side: 'For' or 'Against'
+- `text` (TEXT) - Message content
+- `timestamp` (BIGINT) - Message timestamp
+
+---
 
 ### Room Events
 - `join-room` → User enters a debate room
@@ -175,27 +215,27 @@ Open your browser to `http://localhost:5173` and start debating!
 | Real-Time | Socket.io Client |
 | Backend | Node.js, Express |
 | Real-Time Server | Socket.io |
-| Storage | In-Memory (no database) |
+| Database | PostgreSQL |
 | Styling | CSS3, CSS Variables |
 
 ---
 
-## Project Constraints (MVP)
+## Project Features
 
 - Max 2 participants per room
-- In-memory storage (no persistence)
+- PostgreSQL database for persistent storage
+- Rooms, users, and messages are stored and retrieved from database
+- Message history with user identification
 - Preset + custom topics
 - Real-time chat with side indicators
-- Display name stored in localStorage
+- Display name stored in browser
+- User automatic reconnection with 5-second grace period
 - No user accounts or authentication
-- No debate history or analytics
-- No database storage
 
 ---
 
 ## Future Enhancements
 
-- Database persistence
 - User accounts and authentication
 - Debate history and replays
 - Ratings and reputation system
