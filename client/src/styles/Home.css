@@ -1,41 +1,125 @@
 .home-page {
-  height: calc(100vh - 60px);
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;  
-  padding-top: 80px;         
-  overflow: hidden;        
+  position: relative;
+  min-height: calc(100vh - 60px);
+  overflow: hidden;
 }
 
-/* Content wrapper */
-.home-content {
+.home-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.bg-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.08;
+}
+
+.blob-left {
+  width: 300px;
+  height: 300px;
+  background: var(--accent);
+  top: 100px;
+  left: 20%;
+}
+
+.blob-right {
+  width: 250px;
+  height: 250px;
+  background: var(--for-color);
+  top: 200px;
+  right: 20%;
+}
+
+.home-hero {
+  position: relative;
+  z-index: 1;
   text-align: center;
-  max-width: 500px;
-  width: 100%;
+  padding-top: 100px;
+  max-width: 800px;
 }
 
-/* Title */
+.home-badge {
+  display: inline-block;
+  font-size: var(--text-sm);
+  color: var(--accent);
+  background: rgba(59, 130, 246, 0.1);
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  margin-bottom: var(--space-lg);
+}
+
 .home-title {
-  font-size: 3rem;
+  font-size: 3.5rem;
   font-weight: 700;
-  color: var(--text-primary);
+  line-height: 1.1;
+  margin-bottom: var(--space-md);
 }
 
-/* Subtitle */
+.home-title span {
+  color: var(--accent);
+}
+
 .home-subtitle {
-  margin-top: var(--space-sm);
   font-size: var(--text-lg);
   color: var(--text-secondary);
+  max-width: 600px;
+  margin: 0 auto var(--space-xl);
 }
 
-/* Form */
+.home-cta {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
 .home-form {
   display: flex;
   gap: var(--space-sm);
-  margin-top: var(--space-lg);
 }
 
-/* Input expands */
 .home-form .input {
   flex: 1;
+}
+
+.welcome-text {
+  margin-bottom: var(--space-sm);
+}
+
+.welcome-text span {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.home-edit-row {
+  display: flex;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-sm);
+}
+
+.home-edit-row .input {
+  flex: 1;
+}
+
+.home-full-btn {
+  width: 100%;
+}
+
+@media (max-width: 640px) {
+  .home-title {
+    font-size: 2.5rem;
+  }
+
+  .home-form,
+  .home-edit-row {
+    flex-direction: column;
+  }
+
+  .home-form .btn,
+  .home-edit-row .btn,
+  .home-full-btn {
+    width: 100%;
+  }
 }

@@ -9,8 +9,14 @@ export default function MessageBubble({
   messageUserId,
 }) {
   const isMine = myUserId == messageUserId;
-
   const sideClass = side === "For" ? "message-for" : "message-against";
+
+  
+  const formatTime = (timestamp) => {
+    if (!timestamp) return "Invalid time";
+    const date = new Date(Number(timestamp));
+    return isNaN(date.getTime()) ? "Invalid time" : date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
 
   return (
     <div className={`message-row ${isMine ? "theirs" : "mine"}`}>
@@ -23,7 +29,7 @@ export default function MessageBubble({
         <div className="message-text">{text}</div>
 
         <div className="message-time">
-          {new Date(timestamp).toLocaleTimeString()}
+          {formatTime(timestamp)}
         </div>
       </div>
     </div>

@@ -40,4 +40,10 @@ app.get("/health", (req, res) => {
   res.status(200).json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
+app.get("/api/online-count", (req, res) => {
+  const io = require("./socket/index").getIO();
+  const count = io?.sockets?.sockets?.size || 0;
+  res.json({ online: count });
+})
+
 module.exports = app;

@@ -1,45 +1,98 @@
-/* =========================
-   NAVBAR
-========================= */
-
 .navbar {
-  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+
+  height: 60px;
+  z-index: 1000;
+
+  background: rgba(15, 23, 42, 0.7); /* semi-transparent */
+  backdrop-filter: blur(10px);
+
   border-bottom: 1px solid var(--border);
-  background: var(--bg-primary);
 }
 
-/* Logo */
-.navbar-logo a {
-  color: var(--text-primary);
-  font-size: var(--text-lg);
-  font-weight: 600;
+/* Inner layout */
+.navbar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+
   text-decoration: none;
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: var(--text-lg);
 }
 
-/* Links container */
+/* Icon */
+.logo-icon {
+  width: 32px;
+  height: 32px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: var(--radius-sm);
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+
+  font-size: 16px;
+  transition: background 0.15s ease;
+}
+
+.navbar-logo:hover .logo-icon {
+  background: rgba(59, 130, 246, 0.2);
+}
+
+/* Accent part of logo */
+.logo-accent {
+  color: var(--accent);
+}
+
 .navbar-links {
   display: flex;
-  gap: var(--space-md);
+  gap: var(--space-xs);
 }
 
-/* Link */
+/* Link base */
 .nav-link {
-  color: var(--text-secondary);
-  text-decoration: none;
-  font-size: var(--text-md);
-  padding: 6px 10px;
+  display: flex;
+  align-items: center;
+
+  padding: 6px 12px;
   border-radius: var(--radius-sm);
-  transition: background 0.15s ease, color 0.15s ease;
+
+  font-size: var(--text-sm);
+  font-weight: 500;
+
+  text-decoration: none;
+  color: var(--text-secondary);
+
+  transition: all 0.15s ease;
 }
 
 /* Hover */
 .nav-link:hover {
-  background: var(--bg-tertiary);
+  background: rgba(51, 65, 85, 0.5); /* softer than bg-tertiary */
   color: var(--text-primary);
 }
 
-/* Active route */
+/* Active */
 .nav-link.active {
   background: var(--bg-secondary);
   color: var(--text-primary);
+}
+
+/* Prevent content hiding under fixed navbar */
+body {
+  padding-top: 60px;
 }
