@@ -37,7 +37,7 @@ export default function ChatInput({
       <div className="chat-input-row">
         <input
           className="input"
-          maxLength={280}
+          maxLength={3000}
           disabled={disabled}
           value={inputText}
           type="text"
@@ -56,7 +56,7 @@ export default function ChatInput({
       </div>
 
       <div className="chat-input-meta">
-        <span>{inputText.length}/280</span>
+        <span>{inputText.length}/3000</span>
       </div>
     </div>
   );
