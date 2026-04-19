@@ -2,6 +2,7 @@ import { useParams } from "react-router";
 import useRoomHook from "../hooks/useRoom";
 import RoomPage from "../components/Room/RoomPage";
 import SidePicker from "../components/Room/SidePicker";
+import { getUserId } from "../utils/userId";
 
 export default function Room() {
   const { roomId } = useParams();
@@ -14,14 +15,20 @@ export default function Room() {
     roomId,
     displayName,
   );
+  
+  if (!room) {
+    return <div>Loading...</div>;
+  }
 
-  return debateStarted ? (
+  const userId = currentUserId || getUserId();
+  
+  return debateStarted || room.status === "finished" ? (
     <RoomPage
       room={room}
       displayName={displayName}
       socket={socket}
       opponentSide={opponentSide}
-      userId={currentUserId}
+      userId={userId}
       messages={messages}
     ></RoomPage>
   ) : (

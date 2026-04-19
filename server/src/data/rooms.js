@@ -24,13 +24,13 @@ async function getAllRooms() {
     
     const rooms = await Promise.all(result.rows.map(async (room) => {
         const usersQuery = `
-            SELECT id, socket_id, display_name, side
+            SELECT user_id, socket_id, display_name, side
             FROM room_users
             WHERE room_id = $1
         `;
         const usersResult = await pool.query(usersQuery, [room.id]);
         room.users = usersResult.rows.map(user => ({
-            userId: user.id,
+            userId: user.user_id,
             socketId: user.socket_id,
             displayName: user.display_name,
             side: user.side
@@ -56,13 +56,13 @@ async function getRoom(roomId) {
     const room = roomResult.rows[0];
 
     const usersQuery = `
-        SELECT id, socket_id, display_name, side
+        SELECT user_id, socket_id, display_name, side
         FROM room_users
         WHERE room_id = $1
     `;
     const usersResult = await pool.query(usersQuery, [roomId]);
     room.users = usersResult.rows.map(user => ({
-        userId: user.id,
+        userId: user.user_id,
         socketId: user.socket_id,
         displayName: user.display_name,
         side: user.side
@@ -86,20 +86,20 @@ async function getRoom(roomId) {
     return room;
 }
 
-async function addUser(roomId, socketId, displayName) {
+async function addUser(roomId, socketId, displayName, userId) {
     const query = `
-        INSERT INTO room_users(room_id, socket_id, display_name, side)
-        VALUES($1, $2, $3, NULL)
+        INSERT INTO room_users(room_id, user_id, socket_id, display_name, side)
+        VALUES($1, $2, $3, $4, NULL)
         RETURNING *
     `;
-    const result = await pool.query(query, [roomId, socketId, displayName]);
+    const result = await pool.query(query, [roomId, userId, socketId, displayName]);
     return result.rows[0];
 }
 
 async function removeUser(roomId, userId) {
     const query = `
         DELETE FROM room_users
-        WHERE id = $1 AND room_id = $2
+        WHERE user_id = $1 AND room_id = $2
         RETURNING *
     `;
     const result = await pool.query(query, [userId, roomId]);
@@ -131,7 +131,7 @@ async function updateSide(roomId, userId, side) {
     const query = `
         UPDATE room_users
         SET side = $1
-        WHERE id = $2 AND room_id = $3
+        WHERE user_id = $2 AND room_id = $3
         RETURNING *
     `;
     const result = await pool.query(query, [side, userId, roomId]);
@@ -142,7 +142,7 @@ async function updateSocketId(userId, newSocketId) {
     const query = `
         UPDATE room_users
         SET socket_id = $1
-        WHERE id = $2
+        WHERE user_id = $2
         RETURNING *
     `;
     const result = await pool.query(query, [newSocketId, userId]);

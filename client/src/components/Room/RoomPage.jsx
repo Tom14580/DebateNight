@@ -31,11 +31,11 @@ export default function RoomPage({
   return (
     <div className="container flex-col room-page">
       <div className="room-header">
-        <OpponentStatus
+        {room.status !== "finished" && <OpponentStatus
           room={room}
           opponentName={opponentName}
           opponentSide={opponentSide}
-        />
+        />}
 
         <div className="room-meta">
           <h2 className="room-topic">{room.topic}</h2>

@@ -20,6 +20,6 @@
   "scripts": {
     "dev": "nodemon server.js",
     "start": "node server.js",
-    "db:init": "node src/db/db_init.js"
+    "db:init": "node src/data/db_init.js"
   }
 }

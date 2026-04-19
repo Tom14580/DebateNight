@@ -3,8 +3,7 @@ const { createNewRoom, getAllRooms, getRoom, addUser, setStatus, removeUser, del
 async function getRooms (req, res) {
     try {
         const allRooms = await getAllRooms();
-        const activeRooms = allRooms.filter(room => room.status !== "finished");
-        res.status(200).send(activeRooms);
+        res.status(200).send(allRooms);
     }
     catch (error) {
         res.status(500).send(error.message);

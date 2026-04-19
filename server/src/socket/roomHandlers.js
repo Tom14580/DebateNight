@@ -1,4 +1,5 @@
 const { createNewRoom, getAllRooms, getRoom, addUser, setStatus, removeUser, deleteRoom, updateSide, updateSocketId, addMessage } = require('../data/rooms');
+const { findOrCreateUser } = require("../data/users");
 const disconnectTimers = new Map();
 
 async function handleLeave(userId, roomId, io, socket) {
@@ -30,10 +31,10 @@ async function handleLeave(userId, roomId, io, socket) {
             }
         });
         try {
-            await deleteRoom(roomId);
+            await setStatus(roomId, "finished");
         } catch (error) {
             if (socket) socket.emit("error", { message: error.message });
-            console.error("Failed to delete room in handleLeave");
+            console.error("Failed to set room to finished in handleLeave");
             return
         }
     } else {
@@ -56,10 +57,10 @@ async function handleLeave(userId, roomId, io, socket) {
 
         if (!finalRoom || finalRoom.users.length === 0) {
             try {
-                await deleteRoom(roomId);
+                await setStatus(roomId, "finished");
             } catch (error) {
                 if (socket) socket.emit("error", { message: error.message });
-                console.error("Failed to delete room in handleLeave:", error);
+                console.error("Failed to set room to finished in handleLeave:", error);
                 return
             }
         } else {
@@ -71,6 +72,8 @@ async function handleLeave(userId, roomId, io, socket) {
 
 async function roomHandler(socket, io) {
     socket.on("join-room", async (data) => {
+        const user = findOrCreateUser(data.userId);
+
         let room;
         try {
             room = await getRoom(data.roomId);
@@ -83,17 +86,18 @@ async function roomHandler(socket, io) {
             return;
         }
 
+        if (room.status === "finished") {
+            socket.emit("room-updated", { room });
+            return;
+        }
+
         if (!room.users || !Array.isArray(room.users)) {
             room.users = [];
         }
-
-        // Check if this is a reconnecting user (by userId, not displayName)
-        const existingUser = data.userId ? room.users.find(u => {
-            return u.userId === data.userId || u.userId === parseInt(data.userId);
-        }) : null;
+        // Look for existing user by userId
+        const existingUser = room.users.find(u => u.userId === data.userId);
         
         if (existingUser) {
-            // Clear any disconnect timer for this user
             if (disconnectTimers.has(existingUser.userId)) {
                 clearTimeout(disconnectTimers.get(existingUser.userId));
                 disconnectTimers.delete(existingUser.userId);
@@ -130,13 +134,12 @@ async function roomHandler(socket, io) {
             return;
         }
 
-        // New user joining
         if (room.users.length >= 2) {
             socket.emit("room-full", { message: "Room is full" });
             return;
         }
         try {
-            await addUser(room.id, socket.id, data.displayName);
+            await addUser(room.id, socket.id, data.displayName, data.userId);
         } catch(error) {
             socket.emit("error", { message: error.message });
             return;

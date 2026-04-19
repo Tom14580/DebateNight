@@ -31,6 +31,13 @@ export default function Navbar() {
           >
             Lobby
           </Link>
+
+          <Link
+            to="/history"
+            className={`nav-link ${isActive("/history") ? "active" : ""}`}
+          >
+            History
+          </Link>
         </div>
       </div>
     </nav>

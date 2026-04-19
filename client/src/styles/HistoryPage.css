@@ -1,0 +1,37 @@
+.history-page {
+  width: 100%;
+}
+
+/* Header matches lobby */
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Controls full width like lobby */
+.history-controls {
+  width: 100%;
+}
+
+/* Search stretches full width */
+.history-search {
+  width: 100%;
+}
+
+/* Same grid as lobby */
+.history-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-md);
+}
+
+/* Empty state */
+.history-empty {
+  color: var(--text-secondary);
+}
+
+.history-date {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}

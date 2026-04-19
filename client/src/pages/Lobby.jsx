@@ -19,7 +19,7 @@ export default function Lobby() {
                 throw new Error(`Rooms API error: ${roomsResponse.status}`);
             }
             const roomsData = await roomsResponse.json();
-            setRoomsList(roomsData);
+            setRoomsList(roomsData.filter(room => room.status !== "finished"));
         } catch (error) {
             console.error("Error fetching rooms:", error);
             setError(error.message);
@@ -29,12 +29,7 @@ export default function Lobby() {
     useEffect(() => {
         async function fetchData() {
             try {
-                const roomsResponse = await fetch(`${API_URL}/api/rooms`);
-                if (!roomsResponse.ok) {
-                    throw new Error(`Rooms API error: ${roomsResponse.status}`);
-                }
-                const roomsData = await roomsResponse.json();
-                setRoomsList(roomsData);
+                fetchRooms();
                 
                 const topicsResponse = await fetch(`${API_URL}/api/topics`);
                 if (!topicsResponse.ok) {

@@ -1,6 +1,7 @@
 import { useState, useContext, useEffect } from "react";
 import { SocketContext } from "../context/SocketContext";
 import { useNavigate } from "react-router";
+import { getUserId } from "../utils/userId";
 
 const useRoomHook = (roomId, displayName) => {
     const navigate = useNavigate();
@@ -22,8 +23,6 @@ const useRoomHook = (roomId, displayName) => {
                 const currentUser = room.users.find(u => u.socketId === socket.id);
                 if (currentUser) {
                     setCurrentUserId(currentUser.userId);
-                    const userIdStr = String(currentUser.userId);
-                    sessionStorage.setItem(`room-${roomId}-userId`, userIdStr);
                 }
             }
         };
@@ -87,8 +86,8 @@ const useRoomHook = (roomId, displayName) => {
         socket.on("receive-message", handleReceiveMessage);
         
         if (!hasJoined && socket) {
-            const storedUserId = sessionStorage.getItem(`room-${roomId}-userId`);
-            socket.emit("join-room", { roomId, displayName, userId: storedUserId });
+            const userId = getUserId();
+            socket.emit("join-room", { roomId, displayName, userId });
             setHasJoined(true);
         }
 
@@ -106,7 +105,6 @@ const useRoomHook = (roomId, displayName) => {
 
     useEffect(() => {
         return () => {
-            sessionStorage.removeItem(`room-${roomId}-userId`);
             socket.emit("leave-room", { roomId });
         };
     }, [roomId, socket]);
