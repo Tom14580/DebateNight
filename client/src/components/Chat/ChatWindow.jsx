@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import MessageBubble from "./MessageBubble";
 import "../../styles/ChatWindow.css";
 
-export default function ChatWindow({ messages, userId }) {
+export default function ChatWindow({ messages, userId, myChat }) {
   const scrollRef = useRef(null);
 
   useEffect(() => {
@@ -21,6 +21,7 @@ export default function ChatWindow({ messages, userId }) {
             timestamp={message.timestamp}
             messageUserId={message.userId}
             myUserId={userId}
+            myChat={myChat}
           />
         ))
       ) : (

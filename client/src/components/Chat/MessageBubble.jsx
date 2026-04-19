@@ -7,6 +7,7 @@ export default function MessageBubble({
   timestamp,
   myUserId,
   messageUserId,
+  myChat
 }) {
   const isMine = myUserId == messageUserId;
   const sideClass = side === "For" ? "message-for" : "message-against";
@@ -19,13 +20,12 @@ export default function MessageBubble({
   };
 
   return (
-    <div className={`message-row ${isMine ? "theirs" : "mine"}`}>
+    <div className={`message-row ${myChat ? (isMine ? "theirs" : "mine") : (side === "For" ? "theirs" : "mine")}`}>
       <div className={`message ${sideClass}`}>
         <div className="message-header">
           <span className="message-name">{displayName}</span>
           <span className="message-side">({side})</span>
         </div>
-
         <div className="message-text">{text}</div>
 
         <div className="message-time">

@@ -9,7 +9,7 @@ export default function RoomPage({
   socket,
   opponentSide,
   userId,
-  messages,
+  messages
 }) {
   if (!room) {
     return <div className="container">Loading room...</div>;
@@ -27,6 +27,8 @@ export default function RoomPage({
   if (opponentSide === "For") {
     side = "Against";
   }
+
+  const myChat = messages?.some(message => message.userId === userId) || false;
 
   return (
     <div className="container flex-col room-page">
@@ -54,7 +56,7 @@ export default function RoomPage({
         </div>
       </div>
 
-      <ChatWindow messages={messages} userId={userId} />
+      <ChatWindow messages={messages} userId={userId} myChat={myChat}/>
 
       <ChatInput
         socket={socket}
