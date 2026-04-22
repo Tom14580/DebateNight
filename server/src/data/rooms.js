@@ -56,16 +56,17 @@ async function getRoom(roomId) {
     const room = roomResult.rows[0];
 
     const usersQuery = `
-        SELECT user_id, socket_id, display_name, side
+        SELECT user_id, socket_id, display_name, side, has_left
         FROM room_users
-        WHERE room_id = $1
+        WHERE room_id = $1 AND has_left = false
     `;
     const usersResult = await pool.query(usersQuery, [roomId]);
     room.users = usersResult.rows.map(user => ({
         userId: user.user_id,
         socketId: user.socket_id,
         displayName: user.display_name,
-        side: user.side
+        side: user.side,
+        left: user.has_left
     }));
 
     const messagesQuery = `
@@ -98,7 +99,8 @@ async function addUser(roomId, socketId, displayName, userId) {
 
 async function removeUser(roomId, userId) {
     const query = `
-        DELETE FROM room_users
+        UPDATE room_users
+        SET has_left = true
         WHERE user_id = $1 AND room_id = $2
         RETURNING *
     `;

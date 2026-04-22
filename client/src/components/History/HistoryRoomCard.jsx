@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function HistoryRoomCard({ roomId, topic, status, date }) {
+export default function HistoryRoomCard({ roomId, topic, status, date, API_URL, handleDelete }) {
   const navigate = useNavigate();
+  const [error, setError] = useState(null);
 
   let statusClassName = "badge-waiting";
   if (status === "in-progress") {
@@ -13,6 +15,11 @@ export default function HistoryRoomCard({ roomId, topic, status, date }) {
   const formattedDate = date
     ? new Date(date).toLocaleDateString()
     : null;
+  
+
+  if (error) {
+      return <div>Error: {error}</div>;
+  }
 
   return (
     <div className="card flex-col">
@@ -29,12 +36,21 @@ export default function HistoryRoomCard({ roomId, topic, status, date }) {
         </p>
       )}
 
-      <button
-        className="btn btn-primary mt-md"
-        onClick={() => navigate(`/rooms/${roomId}`)}
-      >
-        View
-      </button>
+      <div className="history-actions mt-md">
+        <button
+          className="btn btn-primary"
+          onClick={() => navigate(`/rooms/${roomId}`)}
+        >
+          View
+        </button>
+
+        <button
+          className="btn btn-danger"
+          onClick={() => handleDelete(roomId)}
+        >
+          Delete
+        </button>
+      </div>
     </div>
   );
 }

@@ -128,6 +128,15 @@ input, textarea {
   color: var(--text-primary);
 }
 
+.btn-danger {
+  background: var(--against-color);
+  color: white;
+}
+
+.btn-danger:hover {
+  opacity: 0.9;
+}
+
 /* Input */
 .input {
   width: 100%;
@@ -211,4 +220,39 @@ input, textarea {
 ::selection {
   background: var(--accent);
   color: white;
+}
+
+/* Toast container overrides */
+.custom-toast {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  padding: 12px 14px;
+}
+
+/* Text */
+.custom-toast-body {
+  color: var(--text-primary);
+}
+
+/* Success (delete confirmation still uses accent) */
+.Toastify__toast--success {
+  border-left: 4px solid var(--accent);
+}
+
+/* Error */
+.Toastify__toast--error {
+  border-left: 4px solid var(--against-color);
+}
+
+/* Close button */
+.Toastify__close-button {
+  color: var(--text-secondary);
+}
+
+/* Progress bar (if you enable later) */
+.Toastify__progress-bar {
+  background: var(--accent);
 }

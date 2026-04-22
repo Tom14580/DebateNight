@@ -38,6 +38,9 @@ DebateNight is a minimalist debating web application designed for 1-on-1 debates
 - **Chat Unlock**: Messages only allowed after both users select sides
 - **Immutable Selection**: Side choices cannot be changed once locked
 
+### History
+- View previous debates of yours and others
+
 ---
 
 ## Architecture
@@ -173,6 +176,7 @@ Open your browser to `http://localhost:5173` and start debating!
 
 **room_users**
 - `id` (SERIAL, PRIMARY KEY) - Unique user identifier
+- `user_id` (TEXT) - References users(user_id)
 - `room_id` (TEXT, FK) - References rooms table
 - `socket_id` (TEXT) - Current WebSocket connection ID
 - `display_name` (TEXT) - User's display name
@@ -186,6 +190,10 @@ Open your browser to `http://localhost:5173` and start debating!
 - `side` (TEXT) - Sender's side: 'For' or 'Against'
 - `text` (TEXT) - Message content
 - `timestamp` (BIGINT) - Message timestamp
+
+**users**
+- `user_id` (TEXT) - Tracks users across the app (stored in browser local storage)
+- `created_at` (TIMESTAMP) - Tracks when a user was created
 
 ---
 
@@ -237,8 +245,7 @@ Open your browser to `http://localhost:5173` and start debating!
 ## Future Enhancements
 
 - User accounts and authentication
-- Debate history and replays
-- Ratings and reputation system
+- Users voting who won a debate on the history page and reputation
 - Debate statistics and analytics
 
 ---

@@ -2,6 +2,11 @@ require('dotenv').config();
 const pool = require('./db');
 
 const schema = `
+DROP TABLE IF EXISTS messages CASCADE;
+DROP TABLE IF EXISTS room_users CASCADE;
+DROP TABLE IF EXISTS rooms CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
+
 CREATE TABLE IF NOT EXISTS rooms(
     id TEXT PRIMARY KEY,
     topic TEXT NOT NULL,
@@ -20,7 +25,8 @@ CREATE TABLE IF NOT EXISTS room_users(
     user_id TEXT NOT NULL REFERENCES users(user_id),
     socket_id TEXT NOT NULL,
     display_name TEXT NOT NULL,
-    side TEXT CHECK (side='For' OR side='Against')
+    side TEXT CHECK (side='For' OR side='Against'),
+    has_left BOOLEAN NOT NULL DEFAULT(false)
 );
 
 CREATE TABLE IF NOT EXISTS messages(

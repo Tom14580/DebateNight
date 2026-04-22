@@ -2,7 +2,7 @@ import { useState } from "react";
 import HistoryRoomCard from "./HistoryRoomCard";
 import "../../styles/HistoryPage.css";
 
-export default function HistoryPage({ roomsList }) {
+export default function HistoryPage({ roomsList, API_URL, handleDelete }) {
   const [search, setSearch] = useState("");
 
   const filteredRooms =
@@ -38,6 +38,8 @@ export default function HistoryPage({ roomsList }) {
               topic={room.topic}
               status={room.status}
               date={room.created_at}
+              API_URL={API_URL}
+              handleDelete={handleDelete}
             />
           ))
         ) : (

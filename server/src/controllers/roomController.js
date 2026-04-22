@@ -43,8 +43,23 @@ async function createRoom (req, res) {
     }
 }
 
+async function removeRoom(req, res) {
+    try {
+        const { id } = req.params;
+        if (!id) {
+            return res.status(400).send("roomId required");
+        }
+        await deleteRoom(id);
+        return res.sendStatus(204);
+    }
+    catch (error) {
+        res.status(500).send(error.message);
+    }
+}
+
 module.exports = {
     getRooms,
     getRoomById,
-    createRoom
+    createRoom,
+    removeRoom
 }

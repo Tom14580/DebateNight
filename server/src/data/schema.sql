@@ -16,7 +16,8 @@ CREATE TABLE IF NOT EXISTS room_users(
     user_id TEXT NOT NULL REFERENCES users(user_id),
     socket_id TEXT NOT NULL,
     display_name TEXT NOT NULL,
-    side TEXT CHECK (side='For' OR side='Against')
+    side TEXT CHECK (side='For' OR side='Against'),
+    has_left BOOLEAN NOT NULL DEFAULT(false)
 );
 
 CREATE TABLE IF NOT EXISTS messages(
