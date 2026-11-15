@@ -10,6 +10,8 @@ A real-time 1-on-1 web debate platform where two users debate a chosen topic via
 
 DebateNight is a debating web application designed for 1-on-1 debates. Users create or join debate rooms, select their position on a topic, and chat in real-time.
 
+<img width="1263" height="658" alt="image" src="https://github.com/user-attachments/assets/52d76427-026b-4b38-b659-437df818cad0" />
+
 ---
 
 ## Core Features
@@ -18,11 +20,14 @@ DebateNight is a debating web application designed for 1-on-1 debates. Users cre
 - **Browse Active Rooms**: View all waiting rooms and in-progress debates
 - **Create Rooms**: Pick from preset debate topics or create a custom topic
 - **Join Rooms**: Enter any room with available space
+<img width="1256" height="658" alt="image" src="https://github.com/user-attachments/assets/8a813384-c2fd-45e0-9176-77010adbfbd1" />
+
 
 ### Real-Time Debate
 - **Live Chat**: Messages appear instantly via WebSockets
 - **Message Persistence**: All messages stored in database so they can be viewed in history
 - **Side Selection**: Each user picks FOR or AGAINST
+<img width="1245" height="655" alt="image" src="https://github.com/user-attachments/assets/29905ca2-10ce-44ed-87e7-7219f49b90f3" />
 
 ### User Management
 - **Display Name**: Set your name on first visit, stored in browser
@@ -36,6 +41,7 @@ DebateNight is a debating web application designed for 1-on-1 debates. Users cre
 
 ### History
 - View previous debates of yours and others
+<img width="1260" height="656" alt="image" src="https://github.com/user-attachments/assets/a19ab656-9907-43cf-9fdc-795e7e0b0fe2" />
 
 ---
 
@@ -100,7 +106,7 @@ server/
    - Run the schema file to create tables:
      ```bash
      cd server/src/data
-     psql -U postgres -d debate_night -f schema.sql
+     psql -U postgres -d debatenight -f schema.sql
      ```
    - Update `server/src/data/db.js` with your database connection details (host, user, password, port)
 
